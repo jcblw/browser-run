@@ -12,6 +12,7 @@ module.exports = function (opts) {
   if (!opts) opts = {};
   if ('number' == typeof opts) opts = { port: opts };
   if (!opts.browser) opts.browser = 'phantom';
+  opts.static = !!opts.static;
   return runner(opts);
 };
 
@@ -40,6 +41,17 @@ function runner (opts) {
     }
     if (req.url == '/') {
       fs.createReadStream(__dirname + '/static/index.html').pipe(res);
+      return;
+    }
+
+    if ( opts.static ) {
+      fs.exist( __dirname + req.url, function( exist ) {
+        if ( exist ) {
+          fs.createReadStream( __dirname + req.path ).pipe( res );
+          return;
+        }
+        res.end('not supported');
+      } );
       return;
     }
 
