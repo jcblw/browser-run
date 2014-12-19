@@ -22,6 +22,7 @@ function runner (opts) {
   var dpl = duplex(bundle.createWriteStream(), output);
 
   var server = http.createServer(function (req, res) {
+
     if (/^\/bundle\.js/.test(req.url)) {
       res.setHeader('content-type', 'application/javascript');
       bundle.createReadStream().pipe(res);
@@ -45,9 +46,9 @@ function runner (opts) {
     }
 
     if ( opts.static ) {
-      fs.exist( __dirname + req.url, function( exist ) {
+      fs.exists( process.cwd() + req.url, function( exist ) {
         if ( exist ) {
-          fs.createReadStream( __dirname + req.path ).pipe( res );
+          fs.createReadStream( process.cwd() + req.url ).pipe( res );
           return;
         }
         res.end('not supported');
